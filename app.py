@@ -234,3 +234,6 @@ def readText(img_path):
 @app.errorhandler(500)
 def internal_error(error):
     return "500 error"
+
+if __name__ == "__main__":
+    app.run()
