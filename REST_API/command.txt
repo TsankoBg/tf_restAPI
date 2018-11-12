@@ -1,0 +1,1 @@
+$env:FLASK_APP = "tensorflow_rest_api"
