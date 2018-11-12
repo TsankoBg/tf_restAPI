@@ -22,8 +22,6 @@ pyparsing==2.3.0
 pytesseract==0.2.5
 python-dateutil==2.7.5
 pytz==2018.7
-pywinpty==0.5.4
-pyzmq==17.1.2
 requests==2.20.1
 Scrapy==1.5.1
 six==1.11.0
