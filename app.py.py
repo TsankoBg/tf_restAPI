@@ -20,7 +20,6 @@ import glob
 import matplotlib.pyplot
 import json
 import jwt
-from numba import cuda
 # import other modules
 matplotlib.pyplot.switch_backend('Agg')
 from collections import defaultdict
