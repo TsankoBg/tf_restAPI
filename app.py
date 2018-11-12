@@ -49,7 +49,7 @@ from tensorflow.python.client import device_lib
 
 
 app = Flask(__name__)
-api = Api(app, prefix="/api/v1")
+#api = Api(app, prefix="/api/v1")
 auth = HTTPBasicAuth()
 
 @app.route("/")
