@@ -40,7 +40,7 @@ from itsdangerous import (TimedJSONWebSignatureSerializer
 import config
 # This is needed since the notebook is stored in the object_detection folder.
 #sys.path.append("..")
-from object_detection.utils import ops as utils_ops
+from utils import ops as utils_ops
 if tf.__version__ < '1.8.0':
     raise ImportError(
         'Please upgrade your tensorflow installation to v1.4.* or later!')
@@ -80,7 +80,7 @@ def getDetectionGraph():
             tf.import_graph_def(od_graph_def, name='')
     return detection_graph
 
-detection_graph = getDetectionGraph()
+#detection_graph = getDetectionGraph()
 
 def load_image_into_numpy_array(image):
     (im_width, im_height) = image.shape[0], image.shape[1]
