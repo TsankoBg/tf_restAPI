@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from flask_restful import Resource, Api
 from flask_httpauth import HTTPBasicAuth
 from flask_jwt import JWT, jwt_required, current_identity
@@ -51,6 +51,10 @@ from tensorflow.python.client import device_lib
 app = Flask(__name__)
 api = Api(app, prefix="/api/v1")
 auth = HTTPBasicAuth()
+
+@app.route("/")
+def index():
+    return render_template('index.html')
 
 @auth.verify_password
 def verify(username, password):
