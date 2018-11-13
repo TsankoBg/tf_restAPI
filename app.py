@@ -20,14 +20,12 @@ import glob
 import matplotlib.pyplot
 import json
 import jwt
-# import other modules
 matplotlib.pyplot.switch_backend('Agg')
 from collections import defaultdict
 from matplotlib import pyplot as plt
 from PIL.Image import Image
 from object_detection.utils import label_map_util
-#from utils import visualization_utils as vis_util
-#from memory_profiler import profile
+#from utils impor
 import pytesseract
 import requests
 from io import BytesIO
@@ -46,10 +44,7 @@ if tf.__version__ < '1.8.0':
         'Please upgrade your tensorflow installation to v1.4.* or later!')
 from tensorflow.python.client import device_lib
 
-
-
 app = Flask(__name__)
-#api = Api(app, prefix="/api/v1")
 auth = HTTPBasicAuth()
 
 @app.route("/")
@@ -62,8 +57,6 @@ def verify(username, password):
         return False
     return config.USER_DATA.get(username) == password
 
-# List of the strings that is used to add correct label for each box.
-#label_map = label_map_util.load_labelmap(config.TENSOR_CONFIG['tensor'] + config.LABELS_CONFIG['mscoco'])
 label_map = label_map_util.load_labelmap( config.LABELS_CONFIG['custom'])
 categories = label_map_util.convert_label_map_to_categories(
     label_map, max_num_classes=92, use_display_name=True)
@@ -73,7 +66,6 @@ def getDetectionGraph():
     detection_graph = tf.Graph()
     with detection_graph.as_default():
         od_graph_def = tf.GraphDef()
-        #with tf.gfile.GFile(config.TENSOR_CONFIG['tensor'] + config.GRAPHS_CONFIG['resnet101'], 'rb') as fid:
         with tf.gfile.GFile(config.GRAPHS_CONFIG['graph'], 'rb') as fid:
             serialized_graph = fid.read()
             od_graph_def.ParseFromString(serialized_graph)
