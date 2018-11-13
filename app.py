@@ -25,7 +25,7 @@ matplotlib.pyplot.switch_backend('Agg')
 from collections import defaultdict
 from matplotlib import pyplot as plt
 from PIL.Image import Image
-from utils import label_map_util
+from object_detection.utils import label_map_util
 #from utils import visualization_utils as vis_util
 #from memory_profiler import profile
 import pytesseract
