@@ -381,3 +381,13 @@ body {
     height: 100%;
   }
 }
+h1 { color: #fff; font-family: 'Righteous', cursive; font-size: 65px; font-weight: normal; line-height: 60px; margin: 10px 0 20px; text-transform: uppercase; text-shadow: 2px 2px 0 #000, margin: 10px 0 24px; text-align: center; }
+
+
+h2 { font-size: 30px; letter-spacing: -1px; color: #DFBF84; text-transform: uppercase; text-shadow: 1px 1px 0 #000, margin: 10px 0 24px; text-align: center; line-height: 50px; }
+
+
+a { color: #e8d4a7; text-decoration: none; text-align: right; padding: 15px; font-size: 20px; }
+
+
+a:hover { color: #da9650; text-decoration: blink; }
