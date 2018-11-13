@@ -40,7 +40,7 @@ from itsdangerous import (TimedJSONWebSignatureSerializer
 
 # This is needed since the notebook is stored in the object_detection folder.
 #sys.path.append("..")
-from utils import ops as utils_ops
+from object_detection.utils import ops as utils_ops
 if tf.__version__ < '1.8.0':
     raise ImportError(
         'Please upgrade your tensorflow installation to v1.4.* or later!')
