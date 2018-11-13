@@ -37,7 +37,7 @@ from itertools import islice
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
 # import random
-
+import config
 # This is needed since the notebook is stored in the object_detection folder.
 #sys.path.append("..")
 from object_detection.utils import ops as utils_ops
@@ -63,8 +63,8 @@ def verify(username, password):
     return config.USER_DATA.get(username) == password
 
 # List of the strings that is used to add correct label for each box.
-#label_map = label_map_util.load_labelmap(config.TENSOR_CONFIG['tensor'] + config.LABELS_CONFIG['mscoco'])
-label_map = label_map_util.load_labelmap( 'model/mscoco_label_map.pbtxt')
+label_map = label_map_util.load_labelmap(config.TENSOR_CONFIG['tensor'] + config.LABELS_CONFIG['mscoco'])
+#label_map = label_map_util.load_labelmap( 'model/mscoco_label_map.pbtxt')
 categories = label_map_util.convert_label_map_to_categories(
     label_map, max_num_classes=92, use_display_name=True)
 category_index = label_map_util.create_category_index(categories)
@@ -73,14 +73,14 @@ def getDetectionGraph():
     detection_graph = tf.Graph()
     with detection_graph.as_default():
         od_graph_def = tf.GraphDef()
-        #with tf.gfile.GFile(config.TENSOR_CONFIG['tensor'] + config.GRAPHS_CONFIG['resnet101'], 'rb') as fid:
-        with tf.gfile.GFile('model/frozen_inference_graph.pb', 'rb') as fid:
+        with tf.gfile.GFile(config.TENSOR_CONFIG['tensor'] + config.GRAPHS_CONFIG['resnet101'], 'rb') as fid:
+        #with tf.gfile.GFile('model/frozen_inference_graph.pb', 'rb') as fid:
             serialized_graph = fid.read()
             od_graph_def.ParseFromString(serialized_graph)
             tf.import_graph_def(od_graph_def, name='')
     return detection_graph
 
-#detection_graph = getDetectionGraph()
+detection_graph = getDetectionGraph()
 
 def load_image_into_numpy_array(image):
     (im_width, im_height) = image.shape[0], image.shape[1]
