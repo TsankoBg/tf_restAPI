@@ -2,12 +2,13 @@
 var $ = document.querySelector.bind(document);
 
 //APP
+var tempFiles;
 var App = {};
 App.init = function () {
 	//Init
 	function handleFileSelect(evt) {
 		var files = evt.target.files; // FileList object
-
+		//tempFiles=files;
 		//files template
 		var template = "" + Object.keys(files).
 		map(function (file) {return "<div class=\"file file--" + file + "\">\n     <div class=\"name\"><span>" +
@@ -62,14 +63,7 @@ App.init = function () {
 	};
 
 	//upload more
-	$(".importar").addEventListener("click", function () {
-		var form = document.createElement('form');
-		form.setAttribute('method', 'post');
-		form.setAttribute('action', '/');
-		form.style.display = 'hidden';
-		document.body.appendChild(form)
-		form.submit();
-		console.log('clicked update button');
+	$(".refresher").addEventListener("click", function () {
 		$(".list-files").innerHTML = "";
 		$("footer").classList.remove("hasFiles");
 		$(".importar").classList.remove("active");

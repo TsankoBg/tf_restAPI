@@ -19,17 +19,18 @@
 <h1>Objecct Detection API</h1>
   <div class="upload">
  <div class="upload-files">
-  <header>
-   <p>
+    <header>
+    <p>
     <i class="fa fa-cloud-upload" aria-hidden="true"></i>
     <span class="up">up</span>
     <span class="load">load</span>
-   </p>
-  </header>
-  <div class="body" id="drop">
+    </p>
+    </header>
+    <div class="body" id="drop">
    <i class="fa fa-file-text-o pointer-none" aria-hidden="true"></i>
    <p class="pointer-none"><b>Drag and drop</b> files here <br /> or <a href="" id="triggerFile">browse</a> to begin the upload</p>
-			<input type="file" multiple="multiple" />
+   <form action = "/" method = "POST" enctype = "multipart/form-data">
+    <input type="file" name="file" multiple="multiple" />
   </div>
   <footer>
    <div class="divider">
@@ -38,9 +39,10 @@
    <div class="list-files">
     <!--   template   -->
    </div>
-
    <button class="importar">Submit</button>
    
+  </form>
+  <button id="refresher" class="refresher">Refresh</button>
   </footer>
  </div>
 </div>

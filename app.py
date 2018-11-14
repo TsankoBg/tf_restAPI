@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template
+from flask import request
 from flask import send_file
 from flask_restful import Resource, Api
 from flask_httpauth import HTTPBasicAuth
@@ -231,9 +232,27 @@ def internal_error(error):
 @app.route("/", methods=['POST'])
 def upload():
     if request.method == 'POST':
-        file = Image.open(request.files['file'].stream)
-        #img = detector.detectObject(file)
-        return send_file(io.BytesIO(file),attachment_filename='image.jpg',mimetype='image/jpg')
-
+        filestr = request.files['file'].read()
+        #convert string data to numpy array
+        npimg = np.fromstring(filestr, np.uint8)
+        # convert numpy array to image
+        image = cv2.imdecode(npimg, 1)
+        with detection_graph.as_default():
+            with tf.Session() as sess:
+                detectionResult=[]
+                image_np_expanded = np.expand_dims(image, axis=0)
+                output_dict = run_inference_for_single_image(sess,image)
+                for indx,value in enumerate(output_dict['detection_scores']):
+                    if value > 0.40:
+                        #print('detection score is '  + str(value)  + '-  class is '  + str(output_dict['detection_classes'][indx]))
+                         #print('cordinates: ' + str(output_dict['detection_boxes'][indx]))
+                        humanReadble= category_index[output_dict['detection_classes'][indx]].get('name')
+                        detectionResult.append({  'image_name':str(request.files['file'].filename),
+                                                'class_ID:':str(output_dict['detection_classes'][indx]),
+                                                'object:': str(humanReadble),
+                                                'detection_score':str(value),
+                                                'object_cordinates':str(output_dict['detection_boxes'][indx]),
+                                            })
+    return jsonify(detectionResult) 
 if __name__ == "__main__":
     app.run()
