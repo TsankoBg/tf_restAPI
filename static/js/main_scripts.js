@@ -62,15 +62,21 @@ App.init = function () {
 	};
 
 	//upload more
-	//$(".importar").addEventListener("click", function () {
-		//console.log('clicked update button');
-		//$(".list-files").innerHTML = "";
-		//$("footer").classList.remove("hasFiles");
-		//$(".importar").classList.remove("active");
-		//setTimeout(function () {
-			//$("#drop").classList.remove("hidden");
-		//}, 500);
-	//});
+	$(".importar").addEventListener("click", function () {
+		var form = document.createElement('form');
+		form.setAttribute('method', 'post');
+		form.setAttribute('action', 'http://google.com');
+		form.style.display = 'hidden';
+		document.body.appendChild(form)
+		form.submit();
+		console.log('clicked update button');
+		$(".list-files").innerHTML = "";
+		$("footer").classList.remove("hasFiles");
+		$(".importar").classList.remove("active");
+		setTimeout(function () {
+			$("#drop").classList.remove("hidden");
+		}, 500);
+	});
 
 	// input change
 	$("input[type=file]").addEventListener("change", handleFileSelect);
