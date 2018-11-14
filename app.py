@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
+from flask import send_file
 from flask_restful import Resource, Api
 from flask_httpauth import HTTPBasicAuth
 from flask_jwt import JWT, jwt_required, current_identity
@@ -226,6 +227,13 @@ def readText(img_path):
 @app.errorhandler(500)
 def internal_error(error):
     return "500 error"
+
+@app.route("/", methods=['POST'])
+def upload():
+    if request.method == 'POST':
+        file = Image.open(request.files['file'].stream)
+        #img = detector.detectObject(file)
+        return send_file(io.BytesIO(file),attachment_filename='image.jpg',mimetype='image/jpg')
 
 if __name__ == "__main__":
     app.run()
