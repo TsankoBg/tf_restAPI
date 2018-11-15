@@ -7,11 +7,12 @@ from pytesseract import image_to_string
 class ImageTextReader:
     #def __init__(self):
 
-    def readText(self,img_path):
+    def readText(self,image):
          # Read image with opencv
-        img = cv2.imread(img_path)
+        #img = cv2.imread(img_path)
         # Convert to gray
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        temp=np.asarray(image)
+        img = cv2.cvtColor(temp, cv2.COLOR_BGR2GRAY)
         # Apply dilation and erosion to remove some noise
         kernel = np.ones((1, 1), np.uint8)
         img = cv2.dilate(img, kernel, iterations=1)

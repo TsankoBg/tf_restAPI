@@ -1,12 +1,21 @@
 import numpy as np
 import cv2
-from PIL import Image
 from PIL.Image import Image
+from PIL import Image
 import matplotlib.pyplot
 from matplotlib import pyplot as plt
 matplotlib.pyplot.switch_backend('Agg')
 from collections import defaultdict
 import six.moves.urllib as urllib
+from flask import Flask, jsonify, render_template
+from flask import request
+from flask import send_file
+from flask_restful import Resource, Api
+from flask_httpauth import HTTPBasicAuth
+from flask_jwt import JWT, jwt_required, current_identity
+from werkzeug.security import safe_str_cmp
+from itsdangerous import (TimedJSONWebSignatureSerializer
+                          as Serializer, BadSignature, SignatureExpired)
 # operator used for sorting
 from operator import itemgetter
 import sys
@@ -20,15 +29,7 @@ import io
 from io import BytesIO
 from itertools import islice
 #RESTFUL imports
-from flask import Flask, jsonify, render_template
-from flask import request
-from flask import send_file
-from flask_restful import Resource, Api
-from flask_httpauth import HTTPBasicAuth
-from flask_jwt import JWT, jwt_required, current_identity
-from werkzeug.security import safe_str_cmp
-from itsdangerous import (TimedJSONWebSignatureSerializer
-                          as Serializer, BadSignature, SignatureExpired)
+
 
 from Object_Detector import ObjectDetector
 from text_reader import ImageTextReader
@@ -61,8 +62,7 @@ def scanImagesFromFolder(fpath):
     return jsonify(objectDetector.scanImages(fpath))         
 
 @app.route('/scan/url/<path:url>')
-def product(url):
-    detection_graph = getDetectionGraph()
+def scanFromURL(url):
     response = requests.get(url)
     image = Image.open(BytesIO(response.content))
     return jsonify(objectDetector.scanImage(image))  
@@ -70,8 +70,15 @@ def product(url):
 @app.route('/read/<path:img_path>')
 @auth.login_required
 def readText(img_path):
-    return imageTextReader.readText(img_path)
+    image=cv2.imread(img_path)
+    return imageTextReader.readText(image)
 
+@app.route('/read/url/<path:url>')
+def readTextURL(url):
+    response = requests.get(url)
+    image = Image.open(BytesIO(response.content))
+    return imageTextReader.readText(image) 
+    
 @app.errorhandler(500)
 def internal_error(error):
     return "Image not found"
