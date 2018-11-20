@@ -28,9 +28,6 @@ import requests
 import io
 from io import BytesIO
 from itertools import islice
-#RESTFUL imports
-
-
 from Object_Detector import ObjectDetector
 from text_reader import ImageTextReader
 import config
@@ -64,7 +61,12 @@ def scanImagesFromFolder(fpath):
 @app.route('/scan/url/<path:url>')
 def scanFromURL(url):
     response = requests.get(url)
-    image = Image.open(BytesIO(response.content))
+    #image = Image.open(BytesIO(response.content))
+    #nparr = np.fromstring(BytesIO(response.content), np.uint8)
+    #img_np = cv2.imdecode(nparr, cv2.CV_LOAD_IMAGE_COLOR)
+    file_bytes = np.asarray(bytearray(BytesIO(response.content).read()), dtype=np.uint8)
+    image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+    #cv2.imwrite('img4.jpg',imgage)
     return jsonify(objectDetector.scanImage(image))  
 
 @app.route('/read/<path:img_path>')
@@ -76,7 +78,9 @@ def readText(img_path):
 @app.route('/read/url/<path:url>')
 def readTextURL(url):
     response = requests.get(url)
-    image = Image.open(BytesIO(response.content))
+    #image = Image.open(BytesIO(response.content))
+    file_bytes = np.asarray(bytearray(BytesIO(response.content).read()), dtype=np.uint8)
+    image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
     return imageTextReader.readText(image) 
     
 @app.errorhandler(500)
@@ -84,7 +88,7 @@ def internal_error(error):
     return "Image not found"
 
 #BACKGROUND WORK
-@app.route("/", methods=['POST'])
+@app.route("/submitted", methods=['POST'])
 def upload():
     if request.method == 'POST':
         filestr = request.files['file'].read()

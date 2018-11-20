@@ -17,19 +17,24 @@
 
 <body>
 <h1>Objecct Detection API</h1>
+
   <div class="upload">
+     
  <div class="upload-files">
     <header>
     <p>
     <i class="fa fa-cloud-upload" aria-hidden="true"></i>
-    <span class="up">up</span>
-    <span class="load">load</span>
+    <span class="up">image</span>
+    <span class="load">Scan</span>
     </p>
     </header>
+    <button id="refresher" class="refresher">Refresh  <i class="fa fa-refresh"></i></button>
+    <span class="tooltiptext">Tooltip text</span>
     <div class="body" id="drop">
    <i class="fa fa-file-text-o pointer-none" aria-hidden="true"></i>
-   <p class="pointer-none"><b>Drag and drop</b> files here <br /> or <a href="" id="triggerFile">browse</a> to begin the upload</p>
-   <form action = "/" method = "POST" enctype = "multipart/form-data">
+   <p class="pointer-none"><b>Drag and drop</b> images here <br /> or <a href="" id="triggerFile">browse</a> to begin the upload</p>
+
+   <form action = "/submitted" method = "POST" enctype = "multipart/form-data">
     <input type="file" name="file" multiple="multiple" />
   </div>
   <footer>
@@ -42,7 +47,7 @@
    <button class="importar">Submit</button>
    
   </form>
-  <button id="refresher" class="refresher">Refresh</button>
+  
   </footer>
  </div>
 </div>
