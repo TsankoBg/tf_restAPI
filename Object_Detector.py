@@ -11,7 +11,7 @@ from collections import defaultdict
 import os
 import sys
 import glob
-
+import json
 from tensorflow.python.client import device_lib
 import tensorflow as tf
 from object_detection.utils import label_map_util
@@ -105,15 +105,16 @@ class ObjectDetector:
                 image_np_expanded = np.expand_dims(image, axis=0)
                 output_dict = self.run_inference_for_single_image(sess,image)
                 for indx,value in enumerate(output_dict['detection_scores']):
-                    if value > 0.60:
-    
+                    if value > 0.20:
                         humanReadble= category_index[output_dict['detection_classes'][indx]].get('name')
                         detectionResult.append({  #'image_name':str(image),
-                                                    'class_ID:':str(output_dict['detection_classes'][indx]),
-                                                    'object:': str(humanReadble),
-                                                    'detection_score':str(value),
-                                                    'object_cordinates':str(output_dict['detection_boxes'][indx]),
+                                                    "class_ID":str(output_dict['detection_classes'][indx]),
+                                                    "object": str(humanReadble),
+                                                    "detection_score":str(value),
+                                                    "object_cordinates":str(output_dict['detection_boxes'][indx]),
                                                 })
+                sess.close()
+                #print(detectionResult)
         return detectionResult
 
     def scanImages(self, fpath):
@@ -131,10 +132,11 @@ class ObjectDetector:
                     for indx,value in enumerate(output_dict['detection_scores']):
                         if value > 0.30:
                             humanReadble= category_index[output_dict['detection_classes'][indx]].get('name')
-                            detectionResult.append({'image_name':str(self.getImageName(v)),
-                                                    'class_ID:':str(output_dict['detection_classes'][indx]),
-                                                    'object:': str(humanReadble),                       
-                                                    'detection_score':str(value),
-                                                    'object_cordinates':str(output_dict['detection_boxes'][indx]),
+                            detectionResult.append({"image_name":str(self.getImageName(v)),
+                                                    "class_ID":str(output_dict['detection_classes'][indx]),
+                                                    "object": str(humanReadble),                       
+                                                    "detection_score":str(value),
+                                                    "object_cordinates":str(output_dict['detection_boxes'][indx]),
                                                     })
+            sess.close()
         return detectionResult

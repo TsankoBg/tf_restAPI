@@ -56,7 +56,7 @@ def getObjectFromSingleImage(imgid):
 @app.route('/scan/images/<path:fpath>')
 @auth.login_required
 def scanImagesFromFolder(fpath):
-    return jsonify(objectDetector.scanImages(fpath))         
+    return str(objectDetector.scanImages(fpath))         
 
 @app.route('/scan/url/<path:url>')
 def scanFromURL(url):

@@ -365,6 +365,7 @@ body {
 }
 .refresher:hover + .tooltiptext {
   visibility: visible;
+  font-size: 10px;
   
 }
 .refresher:active {
