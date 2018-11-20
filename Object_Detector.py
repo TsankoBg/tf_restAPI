@@ -106,8 +106,7 @@ class ObjectDetector:
                 output_dict = self.run_inference_for_single_image(sess,image)
                 for indx,value in enumerate(output_dict['detection_scores']):
                     if value > 0.60:
-                        #print('detection score is '  + str(value)  + '-  class is '  + str(output_dict['detection_classes'][indx]))
-                         #print('cordinates: ' + str(output_dict['detection_boxes'][indx]))
+    
                         humanReadble= category_index[output_dict['detection_classes'][indx]].get('name')
                         detectionResult.append({  #'image_name':str(image),
                                                     'class_ID:':str(output_dict['detection_classes'][indx]),
