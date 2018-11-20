@@ -90,13 +90,14 @@ def internal_error(error):
 #BACKGROUND WORK
 @app.route("/submitted", methods=['POST'])
 def upload():
-    jsonData={}
+    jsonData=[]
     if request.method == 'POST':
         uploaded_files = request.files.getlist("file")
         for img in uploaded_files:
             npimg = np.fromstring(img.read(), np.uint8)
             image = cv2.imdecode(npimg, 1)
-            jsonData=objectDetector.scanImage(image)
+            jsonData.append(objectDetector.scanImage(image))
+            
 
     return jsonify(jsonData)   
     
