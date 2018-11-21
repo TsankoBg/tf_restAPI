@@ -24,7 +24,7 @@ App.init = function () {
 		}, 1000);
 
 		Object.keys(files).forEach(function (file) {
-			var load = 500 + file * 500; // fake load
+			var load = 1000 + file * 1000; // fake load
 			setTimeout(function () {
 				$(".file--" + file).querySelector(".progress").classList.remove("active");
 				$(".file--" + file).querySelector(".done").classList.add("anim");
