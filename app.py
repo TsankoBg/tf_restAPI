@@ -75,9 +75,13 @@ def readText(img_path):
     image=cv2.imread(img_path)
     return imageTextReader.readText(image)
 
-@app.route('/search/<object_id>')
+@app.route('/search/object/<object_id>')
 def searchObject(object_id):
     return jsonify(objectDetector.searchObject(object_id))
+
+@app.route('/search/objects/<object_names>')
+def searchObjects(object_names):
+    return jsonify(objectDetector.searchObjects(object_names))
 
 @app.route('/read/url/<path:url>')
 def readTextURL(url):

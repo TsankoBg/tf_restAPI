@@ -164,6 +164,33 @@ class ObjectDetector:
                                                     "detection_score":str(value),
                                                    "object_cordinates":str(output_dict['detection_boxes'][indx]),
                                                     })
+            sess.close()
+        return detectionResult
 
+    def searchObjects(self,objects):
+        objects=objects.split(',')
+        #print(' THIS IS '+  str(objects))
+        valid_images = [".jpg",".gif",".png",".tga"]
+        files = []
+        [files.extend(glob.glob('img' + '/*' + e)) for e in valid_images]
+        imageItems=iter(enumerate(files))
+        detectionResult=[]
+        with detection_graph.as_default():
+            with tf.Session() as sess:
+                for k,v in imageItems:
+                    image=cv2.imread(v)
+                    image_np_expanded = np.expand_dims(image, axis=0)
+                    output_dict = self.run_inference_for_single_image(sess,image)
+                    for indx,value in enumerate(output_dict['detection_scores']):
+                        if value > 0.30:
+                            humanReadble= category_index[output_dict['detection_classes'][indx]].get('name')
+                            #print(humanReadble)
+                            if humanReadble in objects:
+                                detectionResult.append({"image_name":str(self.getImageName(v)),
+                                                    "class_ID":str(output_dict['detection_classes'][indx]),
+                                                    "object": str(humanReadble),                       
+                                                    "detection_score":str(value),
+                                                   "object_cordinates":str(output_dict['detection_boxes'][indx]),
+                                                    })
             sess.close()
         return detectionResult
