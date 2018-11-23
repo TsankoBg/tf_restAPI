@@ -56,7 +56,7 @@ def getObjectFromSingleImage(imgid):
 @app.route('/scan/images/<path:fpath>')
 @auth.login_required
 def scanImagesFromFolder(fpath):
-    return str(objectDetector.scanImages(fpath))         
+    return jsonify(objectDetector.scanImages(fpath))         
 
 @app.route('/scan/url/<path:url>')
 def scanFromURL(url):
@@ -75,6 +75,10 @@ def readText(img_path):
     image=cv2.imread(img_path)
     return imageTextReader.readText(image)
 
+@app.route('/search/<object_id>')
+def searchObject(object_id):
+    return jsonify(objectDetector.searchObject(object_id))
+
 @app.route('/read/url/<path:url>')
 def readTextURL(url):
     response = requests.get(url)
@@ -87,7 +91,12 @@ def readTextURL(url):
 def internal_error(error):
     return "Image not found"
 
-#BACKGROUND WORK
+#@app.route('/tester/<url>')
+#def tesingSOmething(url):
+#    r=requests.get('http://127.0.0.1:5000/img/') 
+#    print(r.text)
+#    return r.text
+
 @app.route("/submitted", methods=['POST'])
 def upload():
     jsonData=[]
