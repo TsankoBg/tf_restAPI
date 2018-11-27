@@ -1,3 +1,15 @@
+from object_detection.utils import ops as utils_ops
+from object_detection.utils import label_map_util
+import tensorflow as tf
+from tensorflow.python.client import device_lib
+import json
+import glob
+import sys
+import os
+from io import BytesIO
+from collections import defaultdict
+import requests
+from bs4 import BeautifulSoup
 import numpy as np
 import cv2
 import config
@@ -7,32 +19,25 @@ import matplotlib.pyplot
 from matplotlib import pyplot as plt
 matplotlib.pyplot.switch_backend('Agg')
 
-from collections import defaultdict
-import os
-import sys
-import glob
-import json
-from tensorflow.python.client import device_lib
-import tensorflow as tf
-from object_detection.utils import label_map_util
-from object_detection.utils import ops as utils_ops
 
-import config
 class ObjectDetector:
     def __init__(self):
         if tf.__version__ < '1.8.0':
             raise ImportError(
-            'Please upgrade your tensorflow installation to v1.4.* or later!')
+                'Please upgrade your tensorflow installation to v1.4.* or later!')
         global detection_graph
         global label_map
         global category_index
-        label_map = label_map_util.load_labelmap( config.LABELS_CONFIG['custom'])
+        label_map = label_map_util.load_labelmap(
+            config.LABELS_CONFIG['custom'])
         categories = label_map_util.convert_label_map_to_categories(
-        label_map, max_num_classes=92, use_display_name=True)
+            label_map, max_num_classes=92, use_display_name=True)
         category_index = label_map_util.create_category_index(categories)
-        
+        # for somet in categories:
+        #    print(somet.get('name'))
+
         detection_graph = self.getDetectionGraph()
-       
+
     def getDetectionGraph(self):
         detection_graph = tf.Graph()
         with detection_graph.as_default():
@@ -42,11 +47,12 @@ class ObjectDetector:
                 od_graph_def.ParseFromString(serialized_graph)
                 tf.import_graph_def(od_graph_def, name='')
         return detection_graph
-    def load_image_into_numpy_array(self,image):
+
+    def load_image_into_numpy_array(self, image):
         (im_width, im_height) = image.shape[0], image.shape[1]
         return np.array(image.getdata()).reshape((im_height, im_width, 3)).astype(np.uint8)
 
-    def run_inference_for_single_image(self,sess,image):
+    def run_inference_for_single_image(self, sess, image):
         # Get handles to input and output tensors
         ops = tf.get_default_graph().get_operations()
         all_tensor_names = {
@@ -68,9 +74,9 @@ class ObjectDetector:
             real_num_detection = tf.cast(
                 tensor_dict['num_detections'][0], tf.int32)
             detection_boxes = tf.slice(detection_boxes, [0, 0], [
-                                    real_num_detection, -1])
+                real_num_detection, -1])
             detection_masks = tf.slice(detection_masks, [0, 0, 0], [
-                                    real_num_detection, -1, -1])
+                real_num_detection, -1, -1])
             detection_masks_reframed = utils_ops.reframe_box_masks_to_image_masks(
                 detection_masks, detection_boxes, image.shape[0], image.shape[1])
             detection_masks_reframed = tf.cast(
@@ -82,7 +88,7 @@ class ObjectDetector:
 
     # Run inference
         output_dict = sess.run(tensor_dict, feed_dict={
-                            image_tensor: np.expand_dims(image, 0)})
+            image_tensor: np.expand_dims(image, 0)})
 
     # all outputs are float32 numpy arrays, so convert types as appropriate
         output_dict['num_detections'] = int(output_dict['num_detections'][0])
@@ -100,97 +106,135 @@ class ObjectDetector:
     def scanImage(self, image):
        # image=cv2.imread(imgid)
         with detection_graph.as_default():
-         with tf.Session() as sess:
-                detectionResult=[]
+            with tf.Session() as sess:
+                detectionResult = []
                 image_np_expanded = np.expand_dims(image, axis=0)
-                output_dict = self.run_inference_for_single_image(sess,image)
-                for indx,value in enumerate(output_dict['detection_scores']):
+                output_dict = self.run_inference_for_single_image(sess, image)
+                for indx, value in enumerate(output_dict['detection_scores']):
                     if value > 0.20:
-                        humanReadble= category_index[output_dict['detection_classes'][indx]].get('name')
-                        detectionResult.append({  #'image_name':str(image),
-                                                    "class_ID":str(output_dict['detection_classes'][indx]),
-                                                    "object": str(humanReadble),
-                                                    "detection_score":str(value),
-                                                    "object_cordinates":str(output_dict['detection_boxes'][indx]),
-                                                })
+                        humanReadble = category_index[output_dict['detection_classes'][indx]].get(
+                            'name')
+                        detectionResult.append({  # 'image_name':str(image),
+                            "class_ID": str(output_dict['detection_classes'][indx]),
+                            "object": str(humanReadble),
+                            "detection_score": str(value),
+                            "object_cordinates": str(output_dict['detection_boxes'][indx]),
+                        })
                 sess.close()
-                #print(detectionResult)
         return detectionResult
 
     def scanImages(self, fpath):
-        valid_images = [".jpg",".gif",".png",".tga"]
+        valid_images = [".jpg", ".gif", ".png", ".tga"]
         files = []
         [files.extend(glob.glob(fpath + '/*' + e)) for e in valid_images]
-        imageItems=iter(enumerate(files))
-        detectionResult=[]
+        imageItems = iter(enumerate(files))
+        detectionResult = []
         with detection_graph.as_default():
             with tf.Session() as sess:
-                for k,v in imageItems:
-                    image=cv2.imread(v)
+                for k, v in imageItems:
+                    image = cv2.imread(v)
                     image_np_expanded = np.expand_dims(image, axis=0)
-                    output_dict = self.run_inference_for_single_image(sess,image)
-                    for indx,value in enumerate(output_dict['detection_scores']):
+                    output_dict = self.run_inference_for_single_image(
+                        sess, image)
+                    for indx, value in enumerate(output_dict['detection_scores']):
                         if value > 0.30:
-                            humanReadble= category_index[output_dict['detection_classes'][indx]].get('name')
-                            detectionResult.append({"image_name":str(self.getImageName(v)),
-                                                    "class_ID":str(output_dict['detection_classes'][indx]),
-                                                    "object": str(humanReadble),                       
-                                                    "detection_score":str(value),
-                                                    "object_cordinates":str(output_dict['detection_boxes'][indx]),
+                            humanReadble = category_index[output_dict['detection_classes'][indx]].get(
+                                'name')
+                            detectionResult.append({"image_name": str(self.getImageName(v)),
+                                                    "class_ID": str(output_dict['detection_classes'][indx]),
+                                                    "object": str(humanReadble),
+                                                    "detection_score": str(value),
+                                                    "object_cordinates": str(output_dict['detection_boxes'][indx]),
                                                     })
             sess.close()
         return detectionResult
 
-    def searchObject(self,objectName):
-        valid_images = [".jpg",".gif",".png",".tga"]
-        files = []
-        [files.extend(glob.glob('img' + '/*' + e)) for e in valid_images]
-        imageItems=iter(enumerate(files))
-        detectionResult=[]
+    def listFD(self, url, ext=''):
+        page = requests.get(url).text
+        # print(page)
+        soup = BeautifulSoup(page, 'html.parser')
+        return [url + '/' + node.get('href') for node in soup.find_all('a') if node.get('href').endswith(tuple(ext))]
+
+    def scanImagesFromURL(self, url):
+        valid_images = ["jpg", "gif", "png", "tga"]
+        detectionResult = []
         with detection_graph.as_default():
             with tf.Session() as sess:
-                for k,v in imageItems:
-                    image=cv2.imread(v)
+                for file in self.listFD(url, valid_images):
+                    response = requests.get(file)
+                    file_bytes = np.asarray(
+                        bytearray(BytesIO(response.content).read()), dtype=np.uint8)
+                    image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
                     image_np_expanded = np.expand_dims(image, axis=0)
-                    output_dict = self.run_inference_for_single_image(sess,image)
-                    for indx,value in enumerate(output_dict['detection_scores']):
+                    output_dict = self.run_inference_for_single_image(
+                        sess, image)
+                    for indx, value in enumerate(output_dict['detection_scores']):
                         if value > 0.30:
-                            humanReadble= category_index[output_dict['detection_classes'][indx]].get('name')
-                            if humanReadble==objectName:
-
-                                detectionResult.append({"image_name":str(self.getImageName(v)),
-                                                    "class_ID":str(output_dict['detection_classes'][indx]),
-                                                    "object": str(humanReadble),                       
-                                                    "detection_score":str(value),
-                                                   "object_cordinates":str(output_dict['detection_boxes'][indx]),
+                            humanReadble = category_index[output_dict['detection_classes'][indx]].get(
+                                'name')
+                            detectionResult.append({"image_name": str(self.getImageName(file)),
+                                                    "class_ID": str(output_dict['detection_classes'][indx]),
+                                                    "object": str(humanReadble),
+                                                    "detection_score": str(value),
+                                                    "object_cordinates": str(output_dict['detection_boxes'][indx]),
                                                     })
             sess.close()
         return detectionResult
 
-    def searchObjects(self,objects):
-        objects=objects.split(',')
+    def searchObjects(self, objects):
+        objects = objects.split(',')
         #print(' THIS IS '+  str(objects))
-        valid_images = [".jpg",".gif",".png",".tga"]
+        valid_images = [".jpg", ".gif", ".png", ".tga"]
         files = []
         [files.extend(glob.glob('img' + '/*' + e)) for e in valid_images]
-        imageItems=iter(enumerate(files))
-        detectionResult=[]
+        imageItems = iter(enumerate(files))
+        detectionResult = []
         with detection_graph.as_default():
             with tf.Session() as sess:
-                for k,v in imageItems:
-                    image=cv2.imread(v)
+                for k, v in imageItems:
+                    image = cv2.imread(v)
                     image_np_expanded = np.expand_dims(image, axis=0)
-                    output_dict = self.run_inference_for_single_image(sess,image)
-                    for indx,value in enumerate(output_dict['detection_scores']):
+                    output_dict = self.run_inference_for_single_image(
+                        sess, image)
+                    for indx, value in enumerate(output_dict['detection_scores']):
                         if value > 0.30:
-                            humanReadble= category_index[output_dict['detection_classes'][indx]].get('name')
-                            #print(humanReadble)
+                            humanReadble = category_index[output_dict['detection_classes'][indx]].get(
+                                'name')
+                            # print(humanReadble)
                             if humanReadble in objects:
-                                detectionResult.append({"image_name":str(self.getImageName(v)),
-                                                    "class_ID":str(output_dict['detection_classes'][indx]),
-                                                    "object": str(humanReadble),                       
-                                                    "detection_score":str(value),
-                                                   "object_cordinates":str(output_dict['detection_boxes'][indx]),
-                                                    })
+                                detectionResult.append({"image_name": str(self.getImageName(v)),
+                                                        "class_ID": str(output_dict['detection_classes'][indx]),
+                                                        "object": str(humanReadble),
+                                                        "detection_score": str(value),
+                                                        "object_cordinates": str(output_dict['detection_boxes'][indx]),
+                                                        })
+            sess.close()
+        return detectionResult
+
+    def searchObjectFromURL(self, url, objects):
+        objects = objects.split(',')
+        valid_images = ["jpg", "gif", "png", "tga"]
+        detectionResult = []
+        with detection_graph.as_default():
+            with tf.Session() as sess:
+                for file in self.listFD(url, valid_images):
+                    response = requests.get(file)
+                    file_bytes = np.asarray(
+                        bytearray(BytesIO(response.content).read()), dtype=np.uint8)
+                    image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+                    image_np_expanded = np.expand_dims(image, axis=0)
+                    output_dict = self.run_inference_for_single_image(
+                        sess, image)
+                    for indx, value in enumerate(output_dict['detection_scores']):
+                        if value > 0.30:
+                            humanReadble = category_index[output_dict['detection_classes'][indx]].get(
+                                'name')
+                            if humanReadble in objects:
+                                detectionResult.append({"image_name": str(self.getImageName(file)),
+                                                        "class_ID": str(output_dict['detection_classes'][indx]),
+                                                        "object": str(humanReadble),
+                                                        "detection_score": str(value),
+                                                        "object_cordinates": str(output_dict['detection_boxes'][indx]),
+                                                        })
             sess.close()
         return detectionResult
