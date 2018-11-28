@@ -1,4 +1,3 @@
-# /opt/settings/config.py
 import os
 os.urandom(24)
 
@@ -18,3 +17,5 @@ LABELS_CONFIG={
     'mscoco': 'data/mscoco_label_map.pbtxt',
     'custom': 'model/mscoco_label_map.pbtxt'
 }
+valid_images = [".jpg", ".gif", ".png", ".tga"]
+valid_URL_images = ["jpg", "gif", "png", "tga"]

@@ -80,7 +80,7 @@ def searchObjects(object_names):
     return jsonify(objectDetector.searchObjects(object_names))
 
 
-@app.route('/search/<path:url>/<object_names>')
+@app.route('/search/url/<path:url>/<object_names>')
 def searchObjectsFromURL(url, object_names):
     return jsonify(objectDetector.searchObjectFromURL(url, object_names))
 

@@ -104,7 +104,6 @@ class ObjectDetector:
         return iName.split('\\')[-1]
 
     def scanImage(self, image):
-       # image=cv2.imread(imgid)
         with detection_graph.as_default():
             with tf.Session() as sess:
                 detectionResult = []
@@ -124,9 +123,9 @@ class ObjectDetector:
         return detectionResult
 
     def scanImages(self, fpath):
-        valid_images = [".jpg", ".gif", ".png", ".tga"]
         files = []
-        [files.extend(glob.glob(fpath + '/*' + e)) for e in valid_images]
+        [files.extend(glob.glob(fpath + '/*' + e))
+         for e in config.valid_images]
         imageItems = iter(enumerate(files))
         detectionResult = []
         with detection_graph.as_default():
@@ -151,16 +150,14 @@ class ObjectDetector:
 
     def listFD(self, url, ext=''):
         page = requests.get(url).text
-        # print(page)
         soup = BeautifulSoup(page, 'html.parser')
         return [url + '/' + node.get('href') for node in soup.find_all('a') if node.get('href').endswith(tuple(ext))]
 
     def scanImagesFromURL(self, url):
-        valid_images = ["jpg", "gif", "png", "tga"]
         detectionResult = []
         with detection_graph.as_default():
             with tf.Session() as sess:
-                for file in self.listFD(url, valid_images):
+                for file in self.listFD(url, config.valid_URL_images):
                     response = requests.get(file)
                     file_bytes = np.asarray(
                         bytearray(BytesIO(response.content).read()), dtype=np.uint8)
@@ -182,11 +179,11 @@ class ObjectDetector:
         return detectionResult
 
     def searchObjects(self, objects):
+        objects = objects.upper()
         objects = objects.split(',')
-        #print(' THIS IS '+  str(objects))
-        valid_images = [".jpg", ".gif", ".png", ".tga"]
         files = []
-        [files.extend(glob.glob('img' + '/*' + e)) for e in valid_images]
+        [files.extend(glob.glob('img' + '/*' + e))
+         for e in config.valid_images]
         imageItems = iter(enumerate(files))
         detectionResult = []
         with detection_graph.as_default():
@@ -200,8 +197,7 @@ class ObjectDetector:
                         if value > 0.30:
                             humanReadble = category_index[output_dict['detection_classes'][indx]].get(
                                 'name')
-                            # print(humanReadble)
-                            if humanReadble in objects:
+                            if humanReadble.upper() in objects:
                                 detectionResult.append({"image_name": str(self.getImageName(v)),
                                                         "class_ID": str(output_dict['detection_classes'][indx]),
                                                         "object": str(humanReadble),
@@ -212,12 +208,12 @@ class ObjectDetector:
         return detectionResult
 
     def searchObjectFromURL(self, url, objects):
+        objects = objects.upper()
         objects = objects.split(',')
-        valid_images = ["jpg", "gif", "png", "tga"]
         detectionResult = []
         with detection_graph.as_default():
             with tf.Session() as sess:
-                for file in self.listFD(url, valid_images):
+                for file in self.listFD(url, config.valid_URL_images):
                     response = requests.get(file)
                     file_bytes = np.asarray(
                         bytearray(BytesIO(response.content).read()), dtype=np.uint8)
@@ -229,7 +225,7 @@ class ObjectDetector:
                         if value > 0.30:
                             humanReadble = category_index[output_dict['detection_classes'][indx]].get(
                                 'name')
-                            if humanReadble in objects:
+                            if humanReadble.upper() in objects:
                                 detectionResult.append({"image_name": str(self.getImageName(file)),
                                                         "class_ID": str(output_dict['detection_classes'][indx]),
                                                         "object": str(humanReadble),
