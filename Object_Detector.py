@@ -24,7 +24,7 @@ class ObjectDetector:
     def __init__(self):
         if tf.__version__ < '1.8.0':
             raise ImportError(
-                'Please upgrade your tensorflow installation to v1.4.* or later!')
+                'Please upgrade your tensorflow installation to v1.8.* or later!')
         global detection_graph
         global label_map
         global category_index
@@ -33,9 +33,6 @@ class ObjectDetector:
         categories = label_map_util.convert_label_map_to_categories(
             label_map, max_num_classes=92, use_display_name=True)
         category_index = label_map_util.create_category_index(categories)
-        # for somet in categories:
-        #    print(somet.get('name'))
-
         detection_graph = self.getDetectionGraph()
 
     def getDetectionGraph(self):

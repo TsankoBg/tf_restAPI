@@ -85,14 +85,14 @@ def searchObjectsFromURL(url, object_names):
     return jsonify(objectDetector.searchObjectFromURL(url, object_names))
 
 
-@app.route('/read/<path:img_path>')
+@app.route('/read/image/<path:img_path>')
 @auth.login_required
 def readText(img_path):
     image = cv2.imread(img_path)
     return imageTextReader.readText(image)
 
 
-@app.route('/read/url/image/<path:url>')
+@app.route('/read/url/<path:url>')
 def readTextURL(url):
     response = requests.get(url)
     file_bytes = np.asarray(
