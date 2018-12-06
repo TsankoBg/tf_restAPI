@@ -30,6 +30,7 @@ from PIL import Image
 import matplotlib.pyplot
 from matplotlib import pyplot as plt
 matplotlib.pyplot.switch_backend('Agg')
+import os
 
 
 objectDetector = ObjectDetector()
@@ -205,14 +206,12 @@ def demoPOST():
         open_cv_image = np.array(file) 
         # Convert RGB to BGR 
         open_cv_image = open_cv_image[:, :, ::-1].copy() 
-        print(open_cv_image)
         img = objectDetector.scanImageDemo(open_cv_image)
-        print(img)
-        cv2.imwrite('testDemo.jpg',img)
+        cv2.imwrite('static/img/testDemo.jpg',img)
+        #full_filename= os.path.join('img','testDemo.jpg')
+        #return render_template("imagePage.html", user_image = full_filename)
+        return render_template("imagePage.html")
         #return send_file(io.BytesIO(img),attachment_filename='image.jpg',mimetype='image/jpg')
-        cv2.imshow('snimka',img)
-        cv2.waitKey(0)
-        return 'hello'
 
 @app.errorhandler(500)
 def internal_error(error):
