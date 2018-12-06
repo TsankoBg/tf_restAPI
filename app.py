@@ -1,7 +1,7 @@
 import config
 from text_reader import ImageTextReader
 from Object_Detector import ObjectDetector
-from Object_Detector_ImageNet import ImagenetDetector
+#from Object_Detector_ImageNet import ImagenetDetector
 from itertools import islice
 from io import BytesIO
 import io
@@ -32,7 +32,7 @@ from matplotlib import pyplot as plt
 matplotlib.pyplot.switch_backend('Agg')
 
 objectDetector = ObjectDetector()
-imagenet = ImagenetDetector()
+
 imageTextReader = ImageTextReader()
 app = Flask(__name__)
 auth = HTTPBasicAuth()
@@ -127,9 +127,10 @@ def scanImagesFromURL(url):
     return jsonify(objectDetector.scanImagesFromURL(url))
 
 
-@app.route('/test/<path:url>')
-def testinfsmoreg(url):
-    return jsonify(imagenet.run_inference_on_image_ImageNet('img/' + url))
+#@app.route('/test/<path:url>')
+#def testinfsmoreg(url):
+#    imagenet = ImagenetDetector()
+#    return jsonify(imagenet.run_inference_on_image_ImageNet('img/' + url))
 
 
 @app.route('/search/folder/<object_names>')
