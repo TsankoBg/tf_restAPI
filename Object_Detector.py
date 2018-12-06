@@ -2,6 +2,7 @@ from object_detection.utils import ops as utils_ops
 from object_detection.utils import label_map_util
 import tensorflow as tf
 from tensorflow.python.client import device_lib
+from utils import visualization_utils as vis_util
 import json
 import glob
 import sys
@@ -118,6 +119,28 @@ class ObjectDetector:
                         })
                 sess.close()
         return detectionResult
+
+    def scanImageDemo(self, image):
+        with detection_graph.as_default():
+            with tf.Session() as sess:
+                detectionResult = []
+                #image_np_expanded = np.expand_dims(image, axis=0)
+                output_dict = self.run_inference_for_single_image(sess, image)
+                if output_dict['detection_scores'][0] > 0.3:
+                    vis_util.visualize_boxes_and_labels_on_image_array(image, output_dict['detection_boxes'], output_dict['detection_classes'], output_dict['detection_scores'], category_index, instance_masks=output_dict.get(
+                    'detection_masks'), use_normalized_coordinates=True, line_thickness=1, min_score_thresh=0.3)   
+                for indx, value in enumerate(output_dict['detection_scores']):
+                    if value > 0.20:
+                        humanReadble = category_index[output_dict['detection_classes'][indx]].get(
+                            'name')
+                        detectionResult.append({  # 'image_name':str(image),
+                            "class_ID": str(output_dict['detection_classes'][indx]),
+                            "object": str(humanReadble),
+                            "detection_score": str(value),
+                            "object_cordinates": str(output_dict['detection_boxes'][indx]),
+                    })
+                sess.close()
+        return image
 
     def scanImages(self, fpath):
         files = []

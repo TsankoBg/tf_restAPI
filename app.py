@@ -43,9 +43,21 @@ auth = HTTPBasicAuth()
 def index():
     return render_template('index.html')
 
+@app.route("/demo")
+def demoRoute():
+    return render_template('demo.html')
 
 @auth.verify_password
 def verify(username, password):
+    """[This function checks if the username and password are correct]
+    
+    Arguments:
+        username {[string]} -- [username]
+        password {[string]} -- [description]
+    
+    Returns:
+        [bool] -- [returns true if username and password are correct, false if username or password are wrong]
+    """
     if not (username and password):
         return False
     return config.USER_DATA.get(username) == password
@@ -54,6 +66,15 @@ def verify(username, password):
 @app.route('/scan/image/<path:imgid>')
 @auth.login_required
 def getObjectFromSingleImage(imgid):
+    """[This function scans a single image and returns the objects found]
+    
+    Arguments:
+        imgid {[string]} -- [Image name located in local "img" folder]
+    
+    Returns:
+        [json] -- [Array of found objects, image name, object found, accuracy, boxes]
+    """
+
     image = cv2.imread(imgid)
     return jsonify(objectDetector.scanImage(image))
 
@@ -61,11 +82,29 @@ def getObjectFromSingleImage(imgid):
 @app.route('/scan/folder/<path:fpath>')
 @auth.login_required
 def scanImagesFromFolder(fpath):
+    """[This function scans every image in a folder and returns the found objects]
+    
+    Arguments:
+        fpath {[string]} -- [This is the name of the local folder, example "img" folder]
+    
+    Returns:
+        [json] -- [Array of found objects, image name, object found, accuracy, boxes]
+    """
+
     return jsonify(objectDetector.scanImages(fpath))
 
 
 @app.route('/scan/url/image/<path:url>')
 def scanFromURL(url):
+    """[This function reads and scans an image from url and return the found objects]
+    
+    Arguments:
+        url {[string]} -- [A url of an image]
+    
+    Returns:
+        [json] -- [Array of found objects, image name, object found, accuracy, boxes]
+    """
+
     response = requests.get(url)
     file_bytes = np.asarray(
         bytearray(BytesIO(response.content).read()), dtype=np.uint8)
@@ -75,6 +114,15 @@ def scanFromURL(url):
 
 @app.route('/scan/url/images/<path:url>')
 def scanImagesFromURL(url):
+    """[This function scans a multiple images from given url and return the objects found]
+    
+    Arguments:
+        url {[string]} -- [Url to a remote folder with  images]
+    
+    Returns:
+        [json] -- [Array of found objects, image name, object found, accuracy, boxes]
+    """
+
     return jsonify(objectDetector.scanImagesFromURL(url))
 
 
@@ -85,17 +133,45 @@ def testinfsmoreg(url):
 
 @app.route('/search/folder/<object_names>')
 def searchObjects(object_names):
+    """[This function searches objects in local folder]
+    
+    Arguments:
+        object_names {[array]} -- [Array of all objects to be searched]
+    
+    Returns:
+        [json] -- [Array of found objects, image name, object found, accuracy, boxes]
+    """
+
     return jsonify(objectDetector.searchObjects(object_names))
 
 
 @app.route('/search/url/<path:url>/<object_names>')
 def searchObjectsFromURL(url, object_names):
+    """[This function searchs for object in given url folder by calling objectDetector class]
+    
+    Arguments:
+        url {[string]} -- [URL path to a folder with images]
+        object_names {[Array]} -- [Arra of all objects to be searched]
+    
+    Returns:
+        [json] -- [Array of found objects, image name, object found, accuracy, boxes]
+    """
+
     return jsonify(objectDetector.searchObjectFromURL(url, object_names))
 
 
 @app.route('/read/image/<path:img_path>')
 @auth.login_required
 def readText(img_path):
+    """[This method calls imageTextReader to read a text from given image]
+    
+    Arguments:
+        img_path {[string]} -- [path to image]
+    
+    Returns:
+        [string] -- [Found text]
+    """
+
     image = cv2.imread(img_path)
     return imageTextReader.readText(image)
 
@@ -121,6 +197,22 @@ def upload():
 
     return jsonify(jsonData)
 
+@app.route("/demoSubmitted", methods=['POST'])
+def demoPOST():
+    jsonData = []
+    if request.method == 'POST':
+        file = Image.open(request.files['file'].stream)
+        open_cv_image = np.array(file) 
+        # Convert RGB to BGR 
+        open_cv_image = open_cv_image[:, :, ::-1].copy() 
+        print(open_cv_image)
+        img = objectDetector.scanImageDemo(open_cv_image)
+        print(img)
+        cv2.imwrite('testDemo.jpg',img)
+        #return send_file(io.BytesIO(img),attachment_filename='image.jpg',mimetype='image/jpg')
+        cv2.imshow('snimka',img)
+        cv2.waitKey(0)
+        return 'hello'
 
 @app.errorhandler(500)
 def internal_error(error):

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <title>Object Detection</title>
+  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+  <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto:100,300'>
+
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/mainpage.css') }}">
+
+  
+</head>
+
+<body>
+<h1>Object Detection API</h1>
+
+  <div class="upload">
+     
+ <div class="upload-files">
+    <header>
+    <p>
+    <i class="fa fa-cloud-upload" aria-hidden="true"></i>
+    <span class="up">image</span>
+    <span class="load">Scan</span>
+    </p>
+    </header>
+    <button id="refresher" class="refresher">Refresh  <i class="fa fa-refresh"></i></button>
+    <span class="tooltiptext">Upload more</span>
+    <div class="body" id="drop">
+   <i class="fa fa-file-text-o pointer-none" aria-hidden="true"></i>
+   <p class="pointer-none"><b>Drag and drop</b> images here <br /> or <a href="" id="triggerFile">browse</a> to begin the upload</p>
+
+   <form action = "/demoSubmitted" method = "POST" enctype = "multipart/form-data">
+    <input type="file" name="file"/>
+  </div>
+  <footer>
+   <div class="divider">
+    <span><AR>FILES</AR></span>
+   </div>
+   <div class="list-files">
+    <!--   template   -->
+   </div>
+   <button class="importar">Submit</button>
+   
+  </form>
+  
+  </footer>
+ </div>
+</div>
+  
+  
+
+<script src="{{ url_for('static', filename="js/main_scripts.js")}}"></script>
+
+
+
+
+</body>
+
+</html>
