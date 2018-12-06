@@ -5,7 +5,6 @@ import argparse
 import os.path
 import re
 import sys
-import tarfile
 import config
 import numpy as np
 from six.moves import urllib
