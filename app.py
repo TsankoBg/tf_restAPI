@@ -30,8 +30,6 @@ from PIL import Image
 import matplotlib.pyplot
 from matplotlib import pyplot as plt
 matplotlib.pyplot.switch_backend('Agg')
-import os
-
 
 objectDetector = ObjectDetector()
 imagenet = ImagenetDetector()
@@ -44,18 +42,20 @@ auth = HTTPBasicAuth()
 def index():
     return render_template('index.html')
 
+
 @app.route("/demo")
 def demoRoute():
     return render_template('demo.html')
 
+
 @auth.verify_password
 def verify(username, password):
     """[This function checks if the username and password are correct]
-    
+
     Arguments:
         username {[string]} -- [username]
         password {[string]} -- [description]
-    
+
     Returns:
         [bool] -- [returns true if username and password are correct, false if username or password are wrong]
     """
@@ -68,10 +68,10 @@ def verify(username, password):
 @auth.login_required
 def getObjectFromSingleImage(imgid):
     """[This function scans a single image and returns the objects found]
-    
+
     Arguments:
         imgid {[string]} -- [Image name located in local "img" folder]
-    
+
     Returns:
         [json] -- [Array of found objects, image name, object found, accuracy, boxes]
     """
@@ -84,10 +84,10 @@ def getObjectFromSingleImage(imgid):
 @auth.login_required
 def scanImagesFromFolder(fpath):
     """[This function scans every image in a folder and returns the found objects]
-    
+
     Arguments:
         fpath {[string]} -- [This is the name of the local folder, example "img" folder]
-    
+
     Returns:
         [json] -- [Array of found objects, image name, object found, accuracy, boxes]
     """
@@ -98,10 +98,10 @@ def scanImagesFromFolder(fpath):
 @app.route('/scan/url/image/<path:url>')
 def scanFromURL(url):
     """[This function reads and scans an image from url and return the found objects]
-    
+
     Arguments:
         url {[string]} -- [A url of an image]
-    
+
     Returns:
         [json] -- [Array of found objects, image name, object found, accuracy, boxes]
     """
@@ -116,10 +116,10 @@ def scanFromURL(url):
 @app.route('/scan/url/images/<path:url>')
 def scanImagesFromURL(url):
     """[This function scans a multiple images from given url and return the objects found]
-    
+
     Arguments:
         url {[string]} -- [Url to a remote folder with  images]
-    
+
     Returns:
         [json] -- [Array of found objects, image name, object found, accuracy, boxes]
     """
@@ -135,10 +135,10 @@ def testinfsmoreg(url):
 @app.route('/search/folder/<object_names>')
 def searchObjects(object_names):
     """[This function searches objects in local folder]
-    
+
     Arguments:
         object_names {[array]} -- [Array of all objects to be searched]
-    
+
     Returns:
         [json] -- [Array of found objects, image name, object found, accuracy, boxes]
     """
@@ -149,11 +149,11 @@ def searchObjects(object_names):
 @app.route('/search/url/<path:url>/<object_names>')
 def searchObjectsFromURL(url, object_names):
     """[This function searchs for object in given url folder by calling objectDetector class]
-    
+
     Arguments:
         url {[string]} -- [URL path to a folder with images]
         object_names {[Array]} -- [Arra of all objects to be searched]
-    
+
     Returns:
         [json] -- [Array of found objects, image name, object found, accuracy, boxes]
     """
@@ -165,10 +165,10 @@ def searchObjectsFromURL(url, object_names):
 @auth.login_required
 def readText(img_path):
     """[This method calls imageTextReader to read a text from given image]
-    
+
     Arguments:
         img_path {[string]} -- [path to image]
-    
+
     Returns:
         [string] -- [Found text]
     """
@@ -198,20 +198,18 @@ def upload():
 
     return jsonify(jsonData)
 
+
 @app.route("/demoSubmitted", methods=['POST'])
 def demoPOST():
     jsonData = []
     if request.method == 'POST':
         file = Image.open(request.files['file'].stream)
-        open_cv_image = np.array(file) 
-        # Convert RGB to BGR 
-        open_cv_image = open_cv_image[:, :, ::-1].copy() 
+        open_cv_image = np.array(file)
+        open_cv_image = open_cv_image[:, :, ::-1].copy()
         img = objectDetector.scanImageDemo(open_cv_image)
-        cv2.imwrite('static/img/testDemo.jpg',img)
-        #full_filename= os.path.join('img','testDemo.jpg')
-        #return render_template("imagePage.html", user_image = full_filename)
+        cv2.imwrite('static/img/testDemo.jpg', img)
         return render_template("imagePage.html")
-        #return send_file(io.BytesIO(img),attachment_filename='image.jpg',mimetype='image/jpg')
+
 
 @app.errorhandler(500)
 def internal_error(error):
