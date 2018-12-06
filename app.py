@@ -203,7 +203,7 @@ def upload():
 
 def backRun(file1,b):
     open_cv_image = np.array(file1)
-    print(file1[0])
+   # print(file1)
     open_cv_image = open_cv_image[:, :, ::-1].copy()
     img = objectDetector.scanImageDemo(open_cv_image)
     cv2.imwrite('static/img/testDemo.jpg', img)
