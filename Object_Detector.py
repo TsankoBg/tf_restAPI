@@ -2,7 +2,7 @@ from object_detection.utils import ops as utils_ops
 from object_detection.utils import label_map_util
 import tensorflow as tf
 from tensorflow.python.client import device_lib
-from utils import visualization_utils as vis_util
+from object_detection.utils import visualization_utils as vis_util
 import json
 import glob
 import sys
