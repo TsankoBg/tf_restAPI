@@ -231,3 +231,5 @@ class ObjectDetector:
                                                         })
             sess.close()
         return detectionResult
+
+   # def detectAndLocateObjects(self,fphath):

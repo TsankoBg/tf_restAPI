@@ -19,13 +19,12 @@ class ImageTextReader:
         kernel = np.ones((1, 1), np.uint8)
         img = cv2.dilate(img, kernel, iterations=1)
         img = cv2.erode(img, kernel, iterations=1)
-        cv2.imwrite( "thres.png", img)
+        #cv2.imwrite( "thres.png", img)
         #  Apply threshold to get image with only black and white
         #img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 31, 2)
         # Recognize text with tesseract for python
-        result = pytesseract.image_to_string(img)
-        #print(str(pytesseract.image_to_boxes(img)) + ' result is ' + str(pytesseract.image_to_data(img)))
-        #if result=='':
-        #    return 'No text'
-        #else:
-        return str(result)
+        result = pytesseract.image_to_string(img, config='--psm 4')
+        if result=='':
+            return 'No text'
+        else:
+            return str(result)
