@@ -25,6 +25,7 @@ from flask import Response, stream_with_context
 from flask import send_file
 from flask import request
 from flask import Flask, jsonify, render_template, redirect, url_for
+from flask_caching import Cache
 import six.moves.urllib as urllib
 from collections import defaultdict
 import numpy as np
@@ -39,6 +40,10 @@ objectDetector = ObjectDetector()
 imageTextReader = ImageTextReader()
 
 app = Flask(__name__)
+cache = Cache(app, config={'CACHE_TYPE': 'simple'
+})
+
+
 auth = HTTPBasicAuth()
 
 th = Thread()
@@ -224,6 +229,7 @@ def demoPOST():
 def something(file1):
     """ The worker function """
     global finished
+    cache.clear()
     img = objectDetector.scanImageDemo(file1)
     cv2.imwrite('static/img/testDemo.jpg', img)
     finished = True
