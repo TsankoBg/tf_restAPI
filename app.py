@@ -232,7 +232,11 @@ def demoPOST():
         file = Image.open(request.files['file'].stream)
         open_cv_image = np.array(file)
         open_cv_image = open_cv_image[:, :, ::-1].copy()
-        os.remove('static/img/testDemo.jpg')
+        try:
+            os.remove('static/img/testDemo.jpg')
+        except OSError:
+            pass
+       
         th = Thread(target=something, args=(open_cv_image,))
         th.start()
     return render_template('loading.html')
