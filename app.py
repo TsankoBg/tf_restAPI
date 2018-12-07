@@ -1,3 +1,6 @@
+import time
+import atexit
+from threading import Thread
 import config
 from text_reader import ImageTextReader
 from Object_Detector import ObjectDetector
@@ -37,6 +40,10 @@ imageTextReader = ImageTextReader()
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
+
+th = Thread()
+finished = False
+
 
 @app.route("/")
 def index():
@@ -127,6 +134,13 @@ def scanImagesFromURL(url):
 
     return jsonify(objectDetector.scanImagesFromURL(url))
 
+
+# @app.route('/test/<path:url>')
+# def testinfsmoreg(url):
+#    imagenet = ImagenetDetector()
+#    return jsonify(imagenet.run_inference_on_image_ImageNet('img/' + url))
+
+
 @app.route('/search/folder/<object_names>')
 def searchObjects(object_names):
     """[This function searches objects in local folder]
@@ -171,7 +185,6 @@ def readText(img_path):
     image = cv2.imread(img_path)
     return imageTextReader.readText(image)
 
-
 @app.route('/read/url/<path:url>')
 def readTextURL(url):
     response = requests.get(url)
@@ -193,21 +206,40 @@ def upload():
 
     return jsonify(jsonData)
 
+
 @app.route("/demoSubmitted", methods=['POST'])
 def demoPOST():
     if request.method == 'POST':
+        global th
+        global finished
+        finished = False
         file = Image.open(request.files['file'].stream)
         open_cv_image = np.array(file)
         open_cv_image = open_cv_image[:, :, ::-1].copy()
-        img = objectDetector.scanImageDemo(open_cv_image)
-        cv2.imwrite('static/img/testDemo.jpg', img)
-        return render_template("imagePage.html")
+        th = Thread(target=something, args=(open_cv_image,))
+        th.start()
+    return render_template('loading.html')
 
-#@app.errorhandler(500)
-#def internal_error(error):
-#    return "Image not found"
 
+def something(file1):
+    """ The worker function """
+    global finished
+    img = objectDetector.scanImageDemo(file1)
+    cv2.imwrite('static/img/testDemo.jpg', img)
+    finished = True
+
+
+@app.route('/result')
+def result():
+    """ Just give back the result of your heavy work """
+    return render_template("imagePage.html")
+
+
+@app.route('/status')
+def thread_status():
+    """ Return the status of the worker thread """
+    return jsonify(dict(status=('finished' if finished else 'running')))
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(Thread=True)
