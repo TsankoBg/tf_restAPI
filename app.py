@@ -1,5 +1,4 @@
 import time
-import atexit
 from threading import Thread
 import config
 from text_reader import ImageTextReader
@@ -54,6 +53,17 @@ finished = False
 def index():
     return render_template('index.html')
 
+@app.after_request
+def add_header(r):
+    """
+    Add headers to both force latest IE rendering engine or Chrome Frame,
+    and also to cache the rendered page for 10 minutes.
+    """
+    r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    r.headers["Pragma"] = "no-cache"
+    r.headers["Expires"] = "0"
+    r.headers['Cache-Control'] = 'public, max-age=0'
+    return r
 
 @app.route("/demo")
 def demoRoute():
@@ -229,9 +239,9 @@ def demoPOST():
 def something(file1):
     """ The worker function """
     global finished
-    cache.clear()
     img = objectDetector.scanImageDemo(file1)
     cv2.imwrite('static/img/testDemo.jpg', img)
+    time.sleep(0.5)
     finished = True
 
 
