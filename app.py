@@ -9,23 +9,18 @@ from io import BytesIO
 import io
 import requests
 from pytesseract import image_to_string
-import pytesseract
 import json
 import sys
 import os
 from operator import itemgetter
 from bs4 import BeautifulSoup
-from itsdangerous import (TimedJSONWebSignatureSerializer
-                          as Serializer, BadSignature, SignatureExpired)
 from werkzeug.security import safe_str_cmp
-from flask_jwt import JWT, jwt_required, current_identity
 from flask_httpauth import HTTPBasicAuth
 from flask_restful import Resource, Api
 from flask import Response, stream_with_context
 from flask import send_file
 from flask import request
 from flask import Flask, jsonify, render_template, redirect, url_for
-from flask_caching import Cache
 import six.moves.urllib as urllib
 from collections import defaultdict
 import numpy as np
@@ -37,7 +32,7 @@ from matplotlib import pyplot as plt
 matplotlib.pyplot.switch_backend('Agg')
 
 objectDetector = ObjectDetector()
-imageTextReader = ImageTextReader()
+
 
 app = Flask(__name__)
 
@@ -128,7 +123,7 @@ def scanFromURL(url):
     Returns:
         [json] -- [Array of found objects, image name, object found, accuracy, boxes]
     """
-
+    imageTextReader = ImageTextReader()
     response = requests.get(url)
     file_bytes = np.asarray(
         bytearray(BytesIO(response.content).read()), dtype=np.uint8)
@@ -196,13 +191,14 @@ def readText(img_path):
     Returns:
         [string] -- [Found text]
     """
-
+    imageTextReader = ImageTextReader()
     image = cv2.imread(img_path)
     return imageTextReader.readText(image)
 
 
 @app.route('/read/url/<path:url>')
 def readTextURL(url):
+    imageTextReader = ImageTextReader()
     response = requests.get(url)
     file_bytes = np.asarray(
         bytearray(BytesIO(response.content).read()), dtype=np.uint8)
