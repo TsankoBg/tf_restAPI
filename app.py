@@ -233,7 +233,7 @@ def demoPOST():
         open_cv_image = np.array(file)
         open_cv_image = open_cv_image[:, :, ::-1].copy()
         try:
-            os.remove('static/img/testDemo.jpg')
+            os.remove('static/img/newImageUsed.jpg')
         except OSError:
             pass
        
