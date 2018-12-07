@@ -247,7 +247,7 @@ def something(file1):
     global finished
     img = objectDetector.scanImageDemo(file1)
     cv2.imwrite('static/img/newImageUsed.jpg', img)
-    time.sleep(5)
+    time.sleep(10)
     finished = True
 
 
