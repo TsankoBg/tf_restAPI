@@ -124,11 +124,12 @@ class ObjectDetector:
         with detection_graph.as_default():
             with tf.Session() as sess:
                 detectionResult = []
+                #image=self.load_image_into_numpy_array(image)
                 #image_np_expanded = np.expand_dims(image, axis=0)
                 output_dict = self.run_inference_for_single_image(sess, image)
                 if output_dict['detection_scores'][0] > 0.3:
                     vis_util.visualize_boxes_and_labels_on_image_array(image, output_dict['detection_boxes'], output_dict['detection_classes'], output_dict['detection_scores'], category_index, instance_masks=output_dict.get(
-                    'detection_masks'), use_normalized_coordinates=True, line_thickness=1, min_score_thresh=0.3)   
+                    'detection_masks'), use_normalized_coordinates=True, line_thickness=3, min_score_thresh=0.3)   
                 for indx, value in enumerate(output_dict['detection_scores']):
                     if value > 0.20:
                         humanReadble = category_index[output_dict['detection_classes'][indx]].get(

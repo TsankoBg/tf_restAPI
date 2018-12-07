@@ -18,10 +18,10 @@ from werkzeug.security import safe_str_cmp
 from flask_jwt import JWT, jwt_required, current_identity
 from flask_httpauth import HTTPBasicAuth
 from flask_restful import Resource, Api
-#from flask import Response, stream_with_context
+from flask import Response, stream_with_context
 from flask import send_file
 from flask import request
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, redirect, url_for
 import six.moves.urllib as urllib
 from collections import defaultdict
 import numpy as np
@@ -31,11 +31,10 @@ from PIL import Image
 import matplotlib.pyplot
 from matplotlib import pyplot as plt
 matplotlib.pyplot.switch_backend('Agg')
-import threading
 
 objectDetector = ObjectDetector()
-
 imageTextReader = ImageTextReader()
+
 app = Flask(__name__)
 auth = HTTPBasicAuth()
 
@@ -46,6 +45,7 @@ def index():
 
 @app.route("/demo")
 def demoRoute():
+   # return redirect("loaded", code=302)
     return render_template('demo.html')
 
 
@@ -127,13 +127,6 @@ def scanImagesFromURL(url):
 
     return jsonify(objectDetector.scanImagesFromURL(url))
 
-
-#@app.route('/test/<path:url>')
-#def testinfsmoreg(url):
-#    imagenet = ImagenetDetector()
-#    return jsonify(imagenet.run_inference_on_image_ImageNet('img/' + url))
-
-
 @app.route('/search/folder/<object_names>')
 def searchObjects(object_names):
     """[This function searches objects in local folder]
@@ -200,27 +193,21 @@ def upload():
 
     return jsonify(jsonData)
 
-
-def backRun(file1,b):
-    open_cv_image = np.array(file1)
-   # print(file1)
-    open_cv_image = open_cv_image[:, :, ::-1].copy()
-    img = objectDetector.scanImageDemo(open_cv_image)
-    cv2.imwrite('static/img/testDemo.jpg', img)
-    return render_template("imagePage.html")
-
-
 @app.route("/demoSubmitted", methods=['POST'])
 def demoPOST():
     if request.method == 'POST':
         file = Image.open(request.files['file'].stream)
-        thread1 = threading.Thread(target=backRun,args=(file,4)).start()
-        return render_template("waiting.html")
+        open_cv_image = np.array(file)
+        open_cv_image = open_cv_image[:, :, ::-1].copy()
+        img = objectDetector.scanImageDemo(open_cv_image)
+        cv2.imwrite('static/img/testDemo.jpg', img)
+        return render_template("imagePage.html")
 
-@app.errorhandler(500)
-def internal_error(error):
-    return "Image not found"
+#@app.errorhandler(500)
+#def internal_error(error):
+#    return "Image not found"
+
 
 
 if __name__ == "__main__":
-    app.run(Thread=True)
+    app.run()
