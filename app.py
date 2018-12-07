@@ -232,6 +232,7 @@ def demoPOST():
         file = Image.open(request.files['file'].stream)
         open_cv_image = np.array(file)
         open_cv_image = open_cv_image[:, :, ::-1].copy()
+        os.remove('static/img/testDemo.jpg')
         th = Thread(target=something, args=(open_cv_image,))
         th.start()
     return render_template('loading.html')
@@ -240,7 +241,6 @@ def demoPOST():
 def something(file1):
     """ The worker function """
     global finished
-    os.remove('static/img/testDemo.jpg')
     img = objectDetector.scanImageDemo(file1)
     cv2.imwrite('static/img/testDemo.jpg', img)
     time.sleep(0.5)
