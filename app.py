@@ -254,8 +254,8 @@ def something(file1):
 @app.route('/result')
 def result():
     """ Just give back the result of your heavy work """
-   # return render_template("imagePage.html")
-    return redirect(url_for('static', filename="img/newImageUsed.jpg"))
+    return render_template("imagePage.html")
+    #return redirect(url_for('static', filename="img/newImageUsed.jpg"))
 
 
 @app.route('/status')
