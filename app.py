@@ -40,9 +40,6 @@ objectDetector = ObjectDetector()
 imageTextReader = ImageTextReader()
 
 app = Flask(__name__)
-cache = Cache(app, config={'CACHE_TYPE': 'simple'
-})
-
 
 auth = HTTPBasicAuth()
 
@@ -53,6 +50,7 @@ finished = False
 @app.route("/")
 def index():
     return render_template('index.html')
+
 
 @app.after_request
 def add_header(r):
@@ -65,6 +63,7 @@ def add_header(r):
     r.headers["Expires"] = "0"
     r.headers['Cache-Control'] = 'public, max-age=0'
     return r
+
 
 @app.route("/demo")
 def demoRoute():
@@ -201,6 +200,7 @@ def readText(img_path):
     image = cv2.imread(img_path)
     return imageTextReader.readText(image)
 
+
 @app.route('/read/url/<path:url>')
 def readTextURL(url):
     response = requests.get(url)
@@ -236,7 +236,7 @@ def demoPOST():
             os.remove('static/img/newImageUsed.jpg')
         except OSError:
             pass
-       
+
         th = Thread(target=something, args=(open_cv_image,))
         th.start()
     return render_template('loading.html')
@@ -255,7 +255,7 @@ def something(file1):
 def result():
     """ Just give back the result of your heavy work """
     return render_template("imagePage.html")
-    #return redirect(url_for('static', filename="img/newImageUsed.jpg"))
+    # return redirect(url_for('static', filename="img/newImageUsed.jpg"))
 
 
 @app.route('/status')
