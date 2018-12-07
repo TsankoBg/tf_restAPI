@@ -12,6 +12,7 @@ from pytesseract import image_to_string
 import pytesseract
 import json
 import sys
+import os
 from operator import itemgetter
 from bs4 import BeautifulSoup
 from itsdangerous import (TimedJSONWebSignatureSerializer
@@ -239,6 +240,7 @@ def demoPOST():
 def something(file1):
     """ The worker function """
     global finished
+    os.remove('static/img/testDemo.jpg')
     img = objectDetector.scanImageDemo(file1)
     cv2.imwrite('static/img/testDemo.jpg', img)
     time.sleep(0.5)
