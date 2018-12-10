@@ -9,6 +9,7 @@ from io import BytesIO
 import io
 import requests
 from pytesseract import image_to_string
+import pytesseract
 import json
 import sys
 import os
@@ -17,7 +18,6 @@ from bs4 import BeautifulSoup
 from werkzeug.security import safe_str_cmp
 from flask_httpauth import HTTPBasicAuth
 from flask_restful import Resource, Api
-from flask import Response, stream_with_context
 from flask import send_file
 from flask import request
 from flask import Flask, jsonify, render_template, redirect, url_for
