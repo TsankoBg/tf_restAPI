@@ -112,10 +112,10 @@ class ObjectDetector:
                         humanReadble = category_index[output_dict['detection_classes'][indx]].get(
                             'name')
                         detectionResult.append({  # 'image_name':str(image),
-                            "class_ID": str(output_dict['detection_classes'][indx]),
+                            "class_ID": int(output_dict['detection_classes'][indx]),
                             "object": str(humanReadble),
-                            "detection_score": str(value),
-                            "object_cordinates": str(output_dict['detection_boxes'][indx]),
+                            "detection_score": float(value),
+                            "object_cordinates": output_dict['detection_boxes'][indx].tolist(),
                         })
                 sess.close()
         return detectionResult
@@ -161,10 +161,10 @@ class ObjectDetector:
                             humanReadble = category_index[output_dict['detection_classes'][indx]].get(
                                 'name')
                             detectionResult.append({"image_name": str(self.getImageName(v)),
-                                                    "class_ID": str(output_dict['detection_classes'][indx]),
+                                                    "class_ID": int(output_dict['detection_classes'][indx]),
                                                     "object": str(humanReadble),
-                                                    "detection_score": str(value),
-                                                    "object_cordinates": str(output_dict['detection_boxes'][indx]),
+                                                    "detection_score": float(value),
+                                                    "object_cordinates": output_dict['detection_boxes'][indx].tolist(),
                                                     })
             sess.close()
         return detectionResult
@@ -191,10 +191,10 @@ class ObjectDetector:
                             humanReadble = category_index[output_dict['detection_classes'][indx]].get(
                                 'name')
                             detectionResult.append({"image_name": str(self.getImageName(file)),
-                                                    "class_ID": str(output_dict['detection_classes'][indx]),
+                                                    "class_ID": int(output_dict['detection_classes'][indx]),
                                                     "object": str(humanReadble),
-                                                    "detection_score": str(value),
-                                                    "object_cordinates": str(output_dict['detection_boxes'][indx]),
+                                                    "detection_score": float(value),
+                                                    "object_cordinates": output_dict['detection_boxes'][indx].tolist(),
                                                     })
             sess.close()
         return detectionResult
@@ -220,10 +220,10 @@ class ObjectDetector:
                                 'name')
                             if humanReadble.upper() in objects:
                                 detectionResult.append({"image_name": str(self.getImageName(v)),
-                                                        "class_ID": str(output_dict['detection_classes'][indx]),
+                                                        "class_ID": int(output_dict['detection_classes'][indx]),
                                                         "object": str(humanReadble),
-                                                        "detection_score": str(value),
-                                                        "object_cordinates": str(output_dict['detection_boxes'][indx]),
+                                                        "detection_score": float(value),
+                                                        "object_cordinates": output_dict['detection_boxes'][indx].tolist(),
                                                         })
             sess.close()
         return detectionResult
@@ -248,10 +248,10 @@ class ObjectDetector:
                                 'name')
                             if humanReadble.upper() in objects:
                                 detectionResult.append({"image_name": str(self.getImageName(file)),
-                                                        "class_ID": str(output_dict['detection_classes'][indx]),
+                                                        "class_ID": int(output_dict['detection_classes'][indx]),
                                                         "object": str(humanReadble),
-                                                        "detection_score": str(value),
-                                                        "object_cordinates": str(output_dict['detection_boxes'][indx]),
+                                                        "detection_score": float(value),
+                                                        "object_cordinates": output_dict['detection_boxes'][indx].tolist(),
                                                         })
             sess.close()
         return detectionResult
