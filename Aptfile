@@ -2,3 +2,13 @@ libsm6
 libxrender1
 libfontconfig1
 libice6
+autoconf automake libtool
+g++
+pkg-config
+libpng-dev
+libjpeg8-dev
+libtiff5-dev
+zlib1g-dev
+libicu-dev
+libpango1.0-dev
+libcairo2-dev
