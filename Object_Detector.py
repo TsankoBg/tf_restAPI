@@ -108,7 +108,7 @@ class ObjectDetector:
                 image_np_expanded = np.expand_dims(image, axis=0)
                 output_dict = self.run_inference_for_single_image(sess, image)
                 for indx, value in enumerate(output_dict['detection_scores']):
-                    if value > 0.20:
+                    if value > 0.60:
                         humanReadble = category_index[output_dict['detection_classes'][indx]].get(
                             'name')
                         detectionResult.append({  # 'image_name':str(image),
@@ -131,7 +131,7 @@ class ObjectDetector:
                     vis_util.visualize_boxes_and_labels_on_image_array(image, output_dict['detection_boxes'], output_dict['detection_classes'], output_dict['detection_scores'], category_index, instance_masks=output_dict.get(
                     'detection_masks'), use_normalized_coordinates=True, line_thickness=3, min_score_thresh=0.3)   
                 for indx, value in enumerate(output_dict['detection_scores']):
-                    if value > 0.20:
+                    if value > 0.60:
                         humanReadble = category_index[output_dict['detection_classes'][indx]].get(
                             'name')
                         detectionResult.append({  # 'image_name':str(image),
@@ -157,7 +157,7 @@ class ObjectDetector:
                     output_dict = self.run_inference_for_single_image(
                         sess, image)
                     for indx, value in enumerate(output_dict['detection_scores']):
-                        if value > 0.30:
+                        if value > 0.60:
                             humanReadble = category_index[output_dict['detection_classes'][indx]].get(
                                 'name')
                             detectionResult.append({"image_name": str(self.getImageName(v)),
@@ -187,7 +187,7 @@ class ObjectDetector:
                     output_dict = self.run_inference_for_single_image(
                         sess, image)
                     for indx, value in enumerate(output_dict['detection_scores']):
-                        if value > 0.30:
+                        if value > 0.60:
                             humanReadble = category_index[output_dict['detection_classes'][indx]].get(
                                 'name')
                             detectionResult.append({"image_name": str(self.getImageName(file)),
@@ -215,7 +215,7 @@ class ObjectDetector:
                     output_dict = self.run_inference_for_single_image(
                         sess, image)
                     for indx, value in enumerate(output_dict['detection_scores']):
-                        if value > 0.30:
+                        if value > 0.60:
                             humanReadble = category_index[output_dict['detection_classes'][indx]].get(
                                 'name')
                             if humanReadble.upper() in objects:
@@ -243,7 +243,7 @@ class ObjectDetector:
                     output_dict = self.run_inference_for_single_image(
                         sess, image)
                     for indx, value in enumerate(output_dict['detection_scores']):
-                        if value > 0.30:
+                        if value > 0.60:
                             humanReadble = category_index[output_dict['detection_classes'][indx]].get(
                                 'name')
                             if humanReadble.upper() in objects:
